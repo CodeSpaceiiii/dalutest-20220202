@@ -4,6 +4,7 @@ package client
 import (
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	openapiutil "github.com/alibabacloud-go/darabonba-openapi/v2/utils"
+	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketUtils"
 	"github.com/alibabacloud-go/tea/dara"
 )
 
@@ -376,13 +377,14 @@ func (client *Client) WebsocketGeneralDemoApiWithOptions(request *WebsocketGener
 		Action:  dara.String("WebsocketGeneralDemoApi"),
 		Version: dara.String("2022-02-02"),
 		// 注意，上层生成器再这里必须转换为全小写的ws和wss，否则会报错
-		Protocol:    dara.String("wss"),
-		Pathname:    dara.String("/ws/general-demo-api"),
-		Method:      dara.String("GET"),
-		AuthType:    dara.String("AK"),
-		Style:       dara.String("ROA"),
-		ReqBodyType: dara.String("json"),
-		BodyType:    dara.String("json"),
+		Protocol:             dara.String("wss"),
+		Pathname:             dara.String("/ws/general-demo-api"),
+		Method:               dara.String("GET"),
+		AuthType:             dara.String("AK"),
+		Style:                dara.String("ROA"),
+		ReqBodyType:          dara.String("json"),
+		BodyType:             dara.String("json"),
+		WebsocketSubProtocol: dara.String("general"),
 	}
 	_result = &WebsocketGeneralDemoApiResponse{}
 	_body, _err := client.DoRequest(params, req, runtime)
@@ -391,7 +393,7 @@ func (client *Client) WebsocketGeneralDemoApiWithOptions(request *WebsocketGener
 	}
 	// 这里不能继续直接使用convert，需要使用新的类，但握手的信息，header还是要能返回
 	// 确保body存在wsClient
-	wsClient, ok := _body["wsClient"].(*dara.DefaultWebSocketClient)
+	wsClient, ok := _body["websocketClient"].(*websocketUtils.WebSocketClient)
 	if !ok {
 		return _result, _err
 	}
