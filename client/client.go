@@ -4,7 +4,7 @@ package client
 import (
 	openapi "github.com/alibabacloud-go/darabonba-openapi/v2/client"
 	openapiutil "github.com/alibabacloud-go/darabonba-openapi/v2/utils"
-	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketUtils"
+	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketutils"
 	"github.com/alibabacloud-go/tea/dara"
 )
 
@@ -321,7 +321,7 @@ func (client *Client) WebsocketAwapDemoApiWithOptions(request *WebsocketAwapDemo
 	}
 	// 这里不能继续直接使用convert，需要使用新的类，但握手的信息，header还是要能返回
 	// 确保body存在wsClient
-	wsClient, ok := _body["websocketClient"].(*websocketUtils.WebSocketClient)
+	wsClient, ok := _body["websocketClient"].(*websocketutils.WebSocketClient)
 	if !ok {
 		return _result, _err
 	}
@@ -400,7 +400,7 @@ func (client *Client) WebsocketGeneralDemoApiWithOptions(request *WebsocketGener
 	}
 	// 这里不能继续直接使用convert，需要使用新的类，但握手的信息，header还是要能返回
 	// 确保body存在wsClient
-	wsClient, ok := _body["websocketClient"].(*websocketUtils.WebSocketClient)
+	wsClient, ok := _body["websocketClient"].(*websocketutils.WebSocketClient)
 	if !ok {
 		return _result, _err
 	}
