@@ -62,7 +62,7 @@ func (h *GeneralWebSocketHandler) HandleGeneralIncomingMessage(session *dara.Web
 func (h *GeneralWebSocketHandler) HandleRawMessage(session *dara.WebSocketSessionInfo, message *dara.WebSocketMessage) error {
 	// 这个方法通常不会被调用，因为 GeneralWebSocketHandler 会优先使用 HandleGeneralTextMessage/HandleGeneralBinaryMessage
 	// 但如果消息无法解析为 General 格式，会回退到这里
-	fmt.Printf("[Handler] HandleRawMessage called. Type: %d, Size: %d bytes\n", message.Type, len(message.Payload))
+	fmt.Printf("[Handler] HandleRawMessage called. Type: %d, Size: %d bytes, message: %v\n", message.Type, len(message.Payload), message)
 	return nil
 }
 
@@ -142,7 +142,7 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 
 func (h *AwapWebSocketHandler) HandleRawMessage(session *dara.WebSocketSessionInfo, message *dara.WebSocketMessage) error {
 	// 如果消息无法解析为 AWAP 格式，会回退到这里
-	fmt.Printf("[AWAP Handler] HandleRawMessage called. Type: %d, Size: %d bytes\n", message.Type, len(message.Payload))
+	fmt.Printf("[AWAP Handler] HandleRawMessage called. Type: %d, Size: %d bytes, message: %v\n", message.Type, len(message.Payload), message)
 	return nil
 }
 
