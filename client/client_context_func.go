@@ -3,7 +3,9 @@ package client
 
 import (
 	"context"
+
 	openapiutil "github.com/alibabacloud-go/darabonba-openapi/v2/utils"
+	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketutils"
 	"github.com/alibabacloud-go/tea/dara"
 )
 
@@ -188,23 +190,30 @@ func (client *Client) WebsocketAwapDemoApiWithContext(ctx context.Context, reque
 		Query:   openapiutil.Query(query),
 	}
 	params := &openapiutil.Params{
-		Action:      dara.String("WebsocketAwapDemoApi"),
-		Version:     dara.String("2022-02-02"),
-		Protocol:    dara.String("HTTPS"),
-		Pathname:    dara.String("/ws/awap-demo-api"),
-		Method:      dara.String("GET"),
-		AuthType:    dara.String("AK"),
-		Style:       dara.String("ROA"),
-		ReqBodyType: dara.String("json"),
-		BodyType:    dara.String("json"),
+		Action:               dara.String("WebsocketAwapDemoApi"),
+		Version:              dara.String("2022-02-02"),
+		Protocol:             dara.String("wss"), // 必须是强制小写的wss或者ws
+		Pathname:             dara.String("/ws/awap-demo-api"),
+		Method:               dara.String("GET"),
+		AuthType:             dara.String("AK"),
+		Style:                dara.String("ROA"),
+		ReqBodyType:          dara.String("json"),
+		BodyType:             dara.String("json"),
+		WebsocketSubProtocol: dara.String("awap"), // 必须指定websocket子协议
 	}
 	_result = &WebsocketAwapDemoApiResponse{}
-	_body, _err := client.CallApiWithCtx(ctx, params, req, runtime)
+	_body, _err := client.DoRequestWithCtx(ctx, params, req, runtime)
 	if _err != nil {
 		return _result, _err
 	}
-	_err = dara.Convert(_body, &_result)
-	return _result, _err
+	// 这里不能继续直接使用convert，需要使用新的类，但握手的信息，header还是要能返回
+	// 确保body存在wsClient
+	wsClient, ok := _body["websocketClient"].(*websocketutils.WebSocketClient)
+	if !ok {
+		return _result, _err
+	}
+	_result.WebSocketClient = wsClient
+	return _result, nil
 }
 
 // @param request - WebsocketGeneralDemoApiRequest
@@ -243,23 +252,29 @@ func (client *Client) WebsocketGeneralDemoApiWithContext(ctx context.Context, re
 		Query:   openapiutil.Query(query),
 	}
 	params := &openapiutil.Params{
-		Action:      dara.String("WebsocketGeneralDemoApi"),
-		Version:     dara.String("2022-02-02"),
-		Protocol:    dara.String("HTTPS"),
-		Pathname:    dara.String("/ws/general-demo-api"),
-		Method:      dara.String("GET"),
-		AuthType:    dara.String("AK"),
-		Style:       dara.String("ROA"),
-		ReqBodyType: dara.String("json"),
-		BodyType:    dara.String("json"),
+		Action:               dara.String("WebsocketGeneralDemoApi"),
+		Version:              dara.String("2022-02-02"),
+		Protocol:             dara.String("wss"), // 必须是强制小写的wss或者ws
+		Pathname:             dara.String("/ws/general-demo-api"),
+		Method:               dara.String("GET"),
+		AuthType:             dara.String("AK"),
+		Style:                dara.String("ROA"),
+		ReqBodyType:          dara.String("json"),
+		BodyType:             dara.String("json"),
+		WebsocketSubProtocol: dara.String("general"), // 必须指定websocket子协议
 	}
 	_result = &WebsocketGeneralDemoApiResponse{}
-	_body, _err := client.CallApiWithCtx(ctx, params, req, runtime)
+	_body, _err := client.DoRequestWithCtx(ctx, params, req, runtime)
 	if _err != nil {
 		return _result, _err
 	}
-	_err = dara.Convert(_body, &_result)
-	return _result, _err
+	// 这里不能继续直接使用convert，需要使用新的类，但握手的信息，header还是要能返回
+	wsClient, ok := _body["websocketClient"].(*websocketutils.WebSocketClient)
+	if !ok {
+		return _result, _err
+	}
+	_result.WebSocketClient = wsClient
+	return _result, nil
 }
 
 // @param request - WebsocketServerExecuteRequest

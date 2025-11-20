@@ -2,7 +2,7 @@
 package client
 
 import (
-	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketUtils"
+	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketutils"
 	"github.com/alibabacloud-go/tea/dara"
 )
 
@@ -19,7 +19,7 @@ type iWebsocketGeneralDemoApiResponse interface {
 }
 
 type WebsocketGeneralDemoApiResponse struct {
-	WebSocketClient *websocketUtils.WebSocketClient `json:"websocketClient,omitempty" xml:"websocketClient,omitempty"`
+	WebSocketClient *websocketutils.WebSocketClient `json:"websocketClient,omitempty" xml:"websocketClient,omitempty"`
 }
 
 // WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent represents the GeneralUpstreamTextEvent input event

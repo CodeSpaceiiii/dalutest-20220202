@@ -319,7 +319,14 @@ func (client *Client) WebsocketAwapDemoApiWithOptions(request *WebsocketAwapDemo
 	if _err != nil {
 		return _result, _err
 	}
-	//
+	// 这里不能继续直接使用convert，需要使用新的类，但握手的信息，header还是要能返回
+	// 确保body存在wsClient
+	wsClient, ok := _body["websocketClient"].(*websocketUtils.WebSocketClient)
+	if !ok {
+		return _result, _err
+	}
+	_result.WebSocketClient = wsClient
+	return _result, nil
 }
 
 // @param request - WebsocketAwapDemoApiRequest

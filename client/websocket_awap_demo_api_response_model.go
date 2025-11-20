@@ -35,7 +35,7 @@ const (
 )
 
 type WebsocketAwapDemoApiResponse struct {
-	WebsockeWebSocketClient *websocketUtils.WebSocketClient `json:"websocketClient,omitempty" xml:"websocketClient,omitempty"`
+	WebSocketClient *websocketutils.WebSocketClient `json:"websocketClient,omitempty" xml:"websocketClient,omitempty"`
 }
 
 // WebsocketAwapDemoApiDataUpstreamTextEvent represents the UpstreamTextEvent input event

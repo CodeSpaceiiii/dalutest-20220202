@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -139,7 +138,7 @@ func main() {
 		log.Fatal("WebSocketClient is nil")
 	}
 
-	wsClient := response.WebSocketClient.GetWebSocketClient()
+	wsClient := response.WebSocketClient
 
 	// 检查连接状态
 	if !wsClient.IsConnected() {
@@ -169,7 +168,6 @@ func main() {
 	fmt.Printf("Closed called: %v\n", handler.ClosedCalled)
 
 	// 如果需要，可以发送一些测试消息
-	ctx := context.Background()
 	if handler.ConnectedCalled {
 		// 发送文本消息示例
 		testMessage := &dara.GeneralMessage{
@@ -183,7 +181,7 @@ func main() {
 		if err != nil {
 			log.Printf("Failed to marshal test message: %v", err)
 		} else {
-			if err := wsClient.SendText(ctx, string(messageJSON)); err != nil {
+			if err := wsClient.SendGeneralTextMessage(string(messageJSON)); err != nil {
 				log.Printf("Failed to send text message: %v", err)
 			} else {
 				fmt.Println("Sent test text message")
