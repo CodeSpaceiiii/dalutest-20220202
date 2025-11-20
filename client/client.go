@@ -390,8 +390,13 @@ func (client *Client) WebsocketGeneralDemoApiWithOptions(request *WebsocketGener
 		return _result, _err
 	}
 	// 这里不能继续直接使用convert，需要使用新的类，但握手的信息，header还是要能返回
-	_err = dara.Convert(_body, &_result)
-	return _result, _err
+	// 确保body存在wsClient
+	wsClient, ok := _body["wsClient"].(*dara.DefaultWebSocketClient)
+	if !ok {
+		return _result, _err
+	}
+	_result.WebSocketClient = wsClient
+	return _result, nil
 }
 
 // @param request - WebsocketGeneralDemoApiRequest
