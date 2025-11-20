@@ -82,6 +82,86 @@ func (h *GeneralWebSocketHandler) SupportsPartialMessages() bool {
 	return false
 }
 
+// awap
+
+// AwapWebSocketHandler 实现 AWAP WebSocket Handler，用于处理 WebSocket AWAP 协议消息
+type AwapWebSocketHandler struct {
+	dara.AbstractAwapWebSocketHandler
+	ConnectedCalled           bool
+	MessageReceivedCount      int
+	ErrorCount                int
+	ClosedCalled              bool
+	LastDownstreamTextEvent   *client.WebsocketAwapDemoApiDataDownstreamTextEvent
+	LastDownstreamBinaryEvent []byte
+	LastMessageReceiveEvent   bool
+}
+
+func (h *AwapWebSocketHandler) AfterConnectionEstablished(session *dara.WebSocketSessionInfo) error {
+	h.ConnectedCalled = true
+	fmt.Printf("[AWAP Handler] Connection established. Session ID: %s, Remote: %s\n", session.SessionID, session.RemoteAddr)
+	return nil
+}
+
+func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionInfo, messageType dara.AwapMessageType, data interface{}) error {
+	h.MessageReceivedCount++
+	fmt.Printf("[AWAP Handler] Received AWAP message. Type: %s\n", messageType)
+
+	// 根据消息类型处理不同的数据
+	switch messageType {
+	case client.WebsocketAwapDemoApiMessageTypeDownstreamTextEvent:
+		if eventData, ok := data.(*client.WebsocketAwapDemoApiDataDownstreamTextEvent); ok {
+			h.LastDownstreamTextEvent = eventData
+			eventJSON, _ := json.Marshal(eventData)
+			fmt.Printf("[AWAP Handler] DownstreamTextEvent data: %s\n", string(eventJSON))
+		} else {
+			// 尝试从 map 转换
+			if dataMap, ok := data.(map[string]interface{}); ok {
+				eventJSON, _ := json.Marshal(dataMap)
+				fmt.Printf("[AWAP Handler] DownstreamTextEvent data (as map): %s\n", string(eventJSON))
+			} else {
+				fmt.Printf("[AWAP Handler] DownstreamTextEvent data type: %T, value: %v\n", data, data)
+			}
+		}
+	case client.WebsocketAwapDemoApiMessageTypeDownstreamBinaryEvent:
+		if binaryData, ok := data.([]byte); ok {
+			h.LastDownstreamBinaryEvent = binaryData
+			fmt.Printf("[AWAP Handler] DownstreamBinaryEvent. Size: %d bytes\n", len(binaryData))
+		} else {
+			fmt.Printf("[AWAP Handler] DownstreamBinaryEvent data type: %T\n", data)
+		}
+	case client.WebsocketAwapDemoApiMessageTypeMessageReceiveEvent:
+		h.LastMessageReceiveEvent = true
+		fmt.Printf("[AWAP Handler] MessageReceiveEvent received\n")
+	default:
+		dataJSON, _ := json.Marshal(data)
+		fmt.Printf("[AWAP Handler] Unknown message type: %s, data: %s\n", messageType, string(dataJSON))
+	}
+
+	return nil
+}
+
+func (h *AwapWebSocketHandler) HandleRawMessage(session *dara.WebSocketSessionInfo, message *dara.WebSocketMessage) error {
+	// 如果消息无法解析为 AWAP 格式，会回退到这里
+	fmt.Printf("[AWAP Handler] HandleRawMessage called. Type: %d, Size: %d bytes\n", message.Type, len(message.Payload))
+	return nil
+}
+
+func (h *AwapWebSocketHandler) HandleError(session *dara.WebSocketSessionInfo, err error) error {
+	h.ErrorCount++
+	fmt.Printf("[AWAP Handler] Error occurred: %v\n", err)
+	return nil
+}
+
+func (h *AwapWebSocketHandler) AfterConnectionClosed(session *dara.WebSocketSessionInfo, code int, reason string) error {
+	h.ClosedCalled = true
+	fmt.Printf("[AWAP Handler] Connection closed. Code: %d, Reason: %s\n", code, reason)
+	return nil
+}
+
+func (h *AwapWebSocketHandler) SupportsPartialMessages() bool {
+	return false
+}
+
 func main() {
 	// 初始化客户端配置
 	credentials, _err := credential.NewCredential(nil)
@@ -208,5 +288,141 @@ func main() {
 	fmt.Printf("Errors occurred: %d\n", handler.ErrorCount)
 	fmt.Printf("Closed called: %v\n", handler.ClosedCalled)
 
-	fmt.Println("Test completed!")
+	fmt.Println("general Test completed!")
+	testAwap(apiClient)
+}
+
+func testAwap(apiClient *client.Client) {
+	// awap start
+	fmt.Println("awap Test started!")
+	// 创建 AWAP WebSocket handler
+	handler := &AwapWebSocketHandler{}
+
+	// 创建请求
+	request := &client.WebsocketAwapDemoApiRequest{
+		Auth:       dara.String("test-auth"),
+		RespBody:   dara.String("test-response-body"),
+		RespStatus: dara.String("200"),
+		SleepMs:    dara.String("0"),
+	}
+
+	// 创建运行时选项，设置 WebSocketHandler
+	runtime := &dara.RuntimeOptions{
+		WebSocketHandler:         handler,
+		ConnectTimeout:           dara.Int(5000),
+		ReadTimeout:              dara.Int(30000),
+		WebSocketPingInterval:    dara.Int(0),      // 禁用 ping，用于测试
+		WebSocketEnableReconnect: dara.Bool(false), // 禁用自动重连，用于测试
+	}
+
+	// 创建 headers
+	headers := make(map[string]*string)
+
+	// 调用 WebSocket API
+	fmt.Println("Calling WebsocketAwapDemoApiWithOptions...")
+	response, err := apiClient.WebsocketAwapDemoApiWithOptions(request, headers, runtime)
+	if err != nil {
+		log.Fatalf("Failed to call WebsocketAwapDemoApiWithOptions: %v", err)
+	}
+
+	// 检查响应
+	if response == nil {
+		log.Fatal("Response is nil")
+	}
+
+	if response.WebSocketClient == nil {
+		log.Fatal("WebSocketClient is nil")
+	}
+
+	wsClient := response.WebSocketClient
+
+	// 检查连接状态
+	if !wsClient.IsConnected() {
+		log.Fatal("WebSocket client is not connected")
+	}
+
+	fmt.Println("WebSocket connection established successfully!")
+
+	// 获取会话信息
+	session := wsClient.GetSessionInfo()
+	if session != nil {
+		fmt.Printf("Session ID: %s\n", session.SessionID)
+		fmt.Printf("Connected at: %s\n", session.ConnectedAt.Format(time.RFC3339))
+		fmt.Printf("Remote address: %s\n", session.RemoteAddr)
+		fmt.Printf("Local address: %s\n", session.LocalAddr)
+	}
+
+	// 等待一段时间以接收消息
+	fmt.Println("Waiting for messages (1 second)...")
+	time.Sleep(1 * time.Second)
+
+	// 打印 handler 统计信息
+	fmt.Printf("\n=== Handler Statistics ===\n")
+	fmt.Printf("Connected called: %v\n", handler.ConnectedCalled)
+	fmt.Printf("Messages received: %d\n", handler.MessageReceivedCount)
+	fmt.Printf("Errors occurred: %d\n", handler.ErrorCount)
+	fmt.Printf("Closed called: %v\n", handler.ClosedCalled)
+
+	// 如果需要，可以发送一些测试消息
+	if handler.ConnectedCalled {
+		// 发送 UpstreamTextEvent 消息示例
+		testEvent := &client.WebsocketAwapDemoApiDataUpstreamTextEvent{
+			Name: dara.String("test-event"),
+			Object: &struct {
+				StrField  *string   `json:"strField,omitempty" xml:"strField,omitempty"`
+				IntField  *int32    `json:"intField,omitempty" xml:"intField,omitempty"`
+				InnerList []*string `json:"innerList,omitempty" xml:"innerList,omitempty"`
+			}{
+				StrField:  dara.String("test-string"),
+				IntField:  dara.Int32(123),
+				InnerList: []*string{dara.String("item1"), dara.String("item2")},
+			},
+			List: []*struct {
+				Key2     *bool   `json:"boolField,omitempty" xml:"boolField,omitempty"`
+				StrField *string `json:"strField,omitempty" xml:"strField,omitempty"`
+			}{
+				{
+					Key2:     dara.Bool(true),
+					StrField: dara.String("list-item-1"),
+				},
+			},
+			Map: map[string]interface{}{
+				"key1": "value1",
+				"key2": 42,
+			},
+		}
+
+		if err := wsClient.SendRawAwapMessage(client.WebsocketAwapDemoApiMessageTypeUpstreamTextEvent, 1, testEvent); err != nil {
+			log.Printf("Failed to send AWAP message: %v", err)
+		} else {
+			fmt.Println("Sent test UpstreamTextEvent message")
+		}
+		fmt.Println("Note: AWAP message sending needs to be implemented based on actual API")
+	}
+
+	// 再等待一段时间以接收响应
+	time.Sleep(5 * time.Second)
+
+	// 关闭连接
+	fmt.Println("Closing WebSocket connection...")
+	if err := wsClient.Close(); err != nil {
+		log.Printf("Error closing WebSocket: %v", err)
+	}
+
+	// 等待连接关闭完成
+	time.Sleep(1 * time.Second)
+
+	// 最终统计
+	fmt.Printf("\n=== Final Statistics ===\n")
+	fmt.Printf("Connected called: %v\n", handler.ConnectedCalled)
+	fmt.Printf("Messages received: %d\n", handler.MessageReceivedCount)
+	fmt.Printf("Errors occurred: %d\n", handler.ErrorCount)
+	fmt.Printf("Closed called: %v\n", handler.ClosedCalled)
+
+	if handler.LastDownstreamTextEvent != nil {
+		eventJSON, _ := json.Marshal(handler.LastDownstreamTextEvent)
+		fmt.Printf("Last DownstreamTextEvent: %s\n", string(eventJSON))
+	}
+
+	fmt.Println("AWAP test completed!")
 }
