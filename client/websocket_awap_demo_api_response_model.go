@@ -2,7 +2,7 @@
 package client
 
 import (
-	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketUtils"
+	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketutils"
 	"github.com/alibabacloud-go/tea/dara"
 )
 
