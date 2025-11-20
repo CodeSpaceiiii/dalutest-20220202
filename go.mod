@@ -10,4 +10,5 @@ require (
 replace (
 	github.com/alibabacloud-go/darabonba-openapi/v2 => ../darabonba-openapi/golang
 	github.com/alibabacloud-go/tea => ../tea
+	github.com/alibabacloud-go/tea-utils/v2 => ../tea-utils
 )
