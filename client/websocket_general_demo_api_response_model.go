@@ -22,8 +22,24 @@ type WebsocketGeneralDemoApiResponse struct {
 	WebSocketClient *websocketUtils.WebSocketClient `json:"websocketClient,omitempty" xml:"websocketClient,omitempty"`
 }
 
+// 实现的枚举类
+const (
+	// Upstream event types (client -> server)
+	WebsocketGeneralDemoApiMessageTypeUpstreamTextEvent    dara.AwapMessageType = "UpstreamTextEvent"
+	WebsocketGeneralDemoApiMessageTypeUpstreamBinaryEvent  dara.AwapMessageType = "UpstreamBinaryEvent"
+	WebsocketGeneralDemoApiMessageTypeAckRequiredTextEvent dara.AwapMessageType = "AckRequiredTextEvent"
+
+	// Downstream event types (server -> client)
+	WebsocketGeneralDemoApiMessageTypeMessageReceiveEvent   dara.AwapMessageType = "MessageReceiveEvent"
+	WebsocketGeneralDemoApiMessageTypeDownstreamTextEvent   dara.AwapMessageType = "DownstreamTextEvent"
+	WebsocketGeneralDemoApiMessageTypeDownstreamBinaryEvent dara.AwapMessageType = "DownstreamBinaryEvent"
+
+	// Control message types (server -> client)
+	WebsocketGeneralDemoApiReconnect dara.GeneralMessageType = "RECONNECT" // Server-initiated graceful reconnection
+)
+
 // WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent represents the GeneralUpstreamTextEvent input event
-type WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent struct {
+type WebsocketGeneralDemoApiDataGeneralUpstreamTextEvent struct {
 	Name   *string `json:"name,omitempty" xml:"name,omitempty"`
 	Object *struct {
 		StrField  *string   `json:"strField,omitempty" xml:"strField,omitempty"`
@@ -37,68 +53,68 @@ type WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent struct {
 	Map map[string]interface{} `json:"map,omitempty" xml:"map,omitempty"`
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent) String() string {
+func (s WebsocketGeneralDemoApiDataGeneralUpstreamTextEvent) String() string {
 	return dara.Prettify(s)
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent) GoString() string {
+func (s WebsocketGeneralDemoApiDataGeneralUpstreamTextEvent) GoString() string {
 	return s.String()
 }
 
-func (s *WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent) Validate() error {
+func (s *WebsocketGeneralDemoApiDataGeneralUpstreamTextEvent) Validate() error {
 	return dara.Validate(s)
 }
 
 // WebsocketGeneralDemoApiWebSocketGeneralUpstreamBinaryEvent represents the GeneralUpstreamBinaryEvent input event
-type WebsocketGeneralDemoApiWebSocketGeneralUpstreamBinaryEvent struct {
+type WebsocketGeneralDemoApiDataGeneralUpstreamBinaryEvent struct {
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralUpstreamBinaryEvent) String() string {
+func (s WebsocketGeneralDemoApiDataGeneralUpstreamBinaryEvent) String() string {
 	return dara.Prettify(s)
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralUpstreamBinaryEvent) GoString() string {
+func (s WebsocketGeneralDemoApiDataGeneralUpstreamBinaryEvent) GoString() string {
 	return s.String()
 }
 
-func (s *WebsocketGeneralDemoApiWebSocketGeneralUpstreamBinaryEvent) Validate() error {
+func (s *WebsocketGeneralDemoApiDataGeneralUpstreamBinaryEvent) Validate() error {
 	return dara.Validate(s)
 }
 
 // WebsocketGeneralDemoApiWebSocketUpstreamDefaultTextEvent represents the UpstreamDefaultTextEvent input event
-type WebsocketGeneralDemoApiWebSocketUpstreamDefaultTextEvent struct {
+type WebsocketGeneralDemoApiDataUpstreamDefaultTextEvent struct {
 }
 
-func (s WebsocketGeneralDemoApiWebSocketUpstreamDefaultTextEvent) String() string {
+func (s WebsocketGeneralDemoApiDataUpstreamDefaultTextEvent) String() string {
 	return dara.Prettify(s)
 }
 
-func (s WebsocketGeneralDemoApiWebSocketUpstreamDefaultTextEvent) GoString() string {
+func (s WebsocketGeneralDemoApiDataUpstreamDefaultTextEvent) GoString() string {
 	return s.String()
 }
 
-func (s *WebsocketGeneralDemoApiWebSocketUpstreamDefaultTextEvent) Validate() error {
+func (s *WebsocketGeneralDemoApiDataUpstreamDefaultTextEvent) Validate() error {
 	return dara.Validate(s)
 }
 
 // WebsocketGeneralDemoApiWebSocketDownstreamDefaultTextEvent represents the DownstreamDefaultTextEvent output event
-type WebsocketGeneralDemoApiWebSocketDownstreamDefaultTextEvent struct {
+type WebsocketGeneralDemoApiDataDownstreamDefaultTextEvent struct {
 }
 
-func (s WebsocketGeneralDemoApiWebSocketDownstreamDefaultTextEvent) String() string {
+func (s WebsocketGeneralDemoApiDataDownstreamDefaultTextEvent) String() string {
 	return dara.Prettify(s)
 }
 
-func (s WebsocketGeneralDemoApiWebSocketDownstreamDefaultTextEvent) GoString() string {
+func (s WebsocketGeneralDemoApiDataDownstreamDefaultTextEvent) GoString() string {
 	return s.String()
 }
 
-func (s *WebsocketGeneralDemoApiWebSocketDownstreamDefaultTextEvent) Validate() error {
+func (s *WebsocketGeneralDemoApiDataDownstreamDefaultTextEvent) Validate() error {
 	return dara.Validate(s)
 }
 
 // WebsocketGeneralDemoApiWebSocketGeneralDownstreamTextEvent represents the GeneralDownstreamTextEvent output event
-type WebsocketGeneralDemoApiWebSocketGeneralDownstreamTextEvent struct {
+type WebsocketGeneralDemoApiDataGeneralDownstreamTextEvent struct {
 	AudioId        *int32  `json:"audioId,omitempty" xml:"audioId,omitempty"`
 	AudioType      *string `json:"audioType,omitempty" xml:"audioType,omitempty"`
 	ProcessStatus  *string `json:"processStatus,omitempty" xml:"processStatus,omitempty"`
@@ -108,30 +124,30 @@ type WebsocketGeneralDemoApiWebSocketGeneralDownstreamTextEvent struct {
 	} `json:"additionalConf,omitempty" xml:"additionalConf,omitempty"`
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralDownstreamTextEvent) String() string {
+func (s WebsocketGeneralDemoApiDataGeneralDownstreamTextEvent) String() string {
 	return dara.Prettify(s)
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralDownstreamTextEvent) GoString() string {
+func (s WebsocketGeneralDemoApiDataGeneralDownstreamTextEvent) GoString() string {
 	return s.String()
 }
 
-func (s *WebsocketGeneralDemoApiWebSocketGeneralDownstreamTextEvent) Validate() error {
+func (s *WebsocketGeneralDemoApiDataGeneralDownstreamTextEvent) Validate() error {
 	return dara.Validate(s)
 }
 
 // WebsocketGeneralDemoApiWebSocketGeneralDownstreamBinaryEvent represents the GeneralDownstreamBinaryEvent output event
-type WebsocketGeneralDemoApiWebSocketGeneralDownstreamBinaryEvent struct {
+type WebsocketGeneralDemoApiDataGeneralDownstreamBinaryEvent struct {
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralDownstreamBinaryEvent) String() string {
+func (s WebsocketGeneralDemoApiDataGeneralDownstreamBinaryEvent) String() string {
 	return dara.Prettify(s)
 }
 
-func (s WebsocketGeneralDemoApiWebSocketGeneralDownstreamBinaryEvent) GoString() string {
+func (s WebsocketGeneralDemoApiDataGeneralDownstreamBinaryEvent) GoString() string {
 	return s.String()
 }
 
-func (s *WebsocketGeneralDemoApiWebSocketGeneralDownstreamBinaryEvent) Validate() error {
+func (s *WebsocketGeneralDemoApiDataGeneralDownstreamBinaryEvent) Validate() error {
 	return dara.Validate(s)
 }
