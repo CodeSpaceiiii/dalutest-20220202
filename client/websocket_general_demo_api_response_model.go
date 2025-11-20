@@ -22,22 +22,6 @@ type WebsocketGeneralDemoApiResponse struct {
 	WebSocketClient *websocketUtils.WebSocketClient `json:"websocketClient,omitempty" xml:"websocketClient,omitempty"`
 }
 
-// 实现的枚举类
-const (
-	// Upstream event types (client -> server)
-	WebsocketGeneralDemoApiMessageTypeUpstreamTextEvent    dara.AwapMessageType = "UpstreamTextEvent"
-	WebsocketGeneralDemoApiMessageTypeUpstreamBinaryEvent  dara.AwapMessageType = "UpstreamBinaryEvent"
-	WebsocketGeneralDemoApiMessageTypeAckRequiredTextEvent dara.AwapMessageType = "AckRequiredTextEvent"
-
-	// Downstream event types (server -> client)
-	WebsocketGeneralDemoApiMessageTypeMessageReceiveEvent   dara.AwapMessageType = "MessageReceiveEvent"
-	WebsocketGeneralDemoApiMessageTypeDownstreamTextEvent   dara.AwapMessageType = "DownstreamTextEvent"
-	WebsocketGeneralDemoApiMessageTypeDownstreamBinaryEvent dara.AwapMessageType = "DownstreamBinaryEvent"
-
-	// Control message types (server -> client)
-	WebsocketGeneralDemoApiReconnect dara.GeneralMessageType = "RECONNECT" // Server-initiated graceful reconnection
-)
-
 // WebsocketGeneralDemoApiWebSocketGeneralUpstreamTextEvent represents the GeneralUpstreamTextEvent input event
 type WebsocketGeneralDemoApiDataGeneralUpstreamTextEvent struct {
 	Name   *string `json:"name,omitempty" xml:"name,omitempty"`

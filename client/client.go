@@ -303,23 +303,23 @@ func (client *Client) WebsocketAwapDemoApiWithOptions(request *WebsocketAwapDemo
 		Query:   openapiutil.Query(query),
 	}
 	params := &openapiutil.Params{
-		Action:      dara.String("WebsocketAwapDemoApi"),
-		Version:     dara.String("2022-02-02"),
-		Protocol:    dara.String("HTTPS"),
-		Pathname:    dara.String("/ws/awap-demo-api"),
-		Method:      dara.String("GET"),
-		AuthType:    dara.String("AK"),
-		Style:       dara.String("ROA"),
-		ReqBodyType: dara.String("json"),
-		BodyType:    dara.String("json"),
+		Action:               dara.String("WebsocketAwapDemoApi"),
+		Version:              dara.String("2022-02-02"),
+		Protocol:             dara.String("wss"), // 必须是强制小写的wss或者ws
+		Pathname:             dara.String("/ws/awap-demo-api"),
+		Method:               dara.String("GET"),
+		AuthType:             dara.String("AK"),
+		Style:                dara.String("ROA"),
+		ReqBodyType:          dara.String("json"),
+		BodyType:             dara.String("json"),
+		WebsocketSubProtocol: dara.String("awap"), // 必须指定websocket子协议
 	}
 	_result = &WebsocketAwapDemoApiResponse{}
-	_body, _err := client.CallApi(params, req, runtime)
+	_body, _err := client.DoRequest(params, req, runtime)
 	if _err != nil {
 		return _result, _err
 	}
-	_err = dara.Convert(_body, &_result)
-	return _result, _err
+	//
 }
 
 // @param request - WebsocketAwapDemoApiRequest

@@ -2,6 +2,7 @@
 package client
 
 import (
+	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketUtils"
 	"github.com/alibabacloud-go/tea/dara"
 )
 
@@ -17,52 +18,22 @@ type iWebsocketAwapDemoApiResponse interface {
 	GetBody() *WebsocketAwapDemoApiResponseBody
 }
 
+// 实现的枚举类
+const (
+	// Upstream event types (client -> server)
+	WebsocketAwapDemoApiMessageTypeUpstreamTextEvent    dara.AwapMessageType = "UpstreamTextEvent"
+	WebsocketAwapDemoApiMessageTypeUpstreamBinaryEvent  dara.AwapMessageType = "UpstreamBinaryEvent"
+	WebsocketAwapDemoApiMessageTypeAckRequiredTextEvent dara.AwapMessageType = "AckRequiredTextEvent"
+
+	// Downstream event types (server -> client)
+	WebsocketAwapDemoApiMessageTypeMessageReceiveEvent   dara.AwapMessageType = "MessageReceiveEvent"
+	WebsocketAwapDemoApiMessageTypeDownstreamTextEvent   dara.AwapMessageType = "DownstreamTextEvent"
+	WebsocketAwapDemoApiMessageTypeDownstreamBinaryEvent dara.AwapMessageType = "DownstreamBinaryEvent"
+
+	// Control message types (server -> client)
+	WebsocketAwapDemoApiMessageTypeReconnect dara.GeneralMessageType = "RECONNECT" // Server-initiated graceful reconnection
+)
+
 type WebsocketAwapDemoApiResponse struct {
-	Headers    map[string]*string                `json:"headers,omitempty" xml:"headers,omitempty"`
-	StatusCode *int32                            `json:"statusCode,omitempty" xml:"statusCode,omitempty"`
-	Body       *WebsocketAwapDemoApiResponseBody `json:"body,omitempty" xml:"body,omitempty"`
-}
-
-func (s WebsocketAwapDemoApiResponse) String() string {
-	return dara.Prettify(s)
-}
-
-func (s WebsocketAwapDemoApiResponse) GoString() string {
-	return s.String()
-}
-
-func (s *WebsocketAwapDemoApiResponse) GetHeaders() map[string]*string {
-	return s.Headers
-}
-
-func (s *WebsocketAwapDemoApiResponse) GetStatusCode() *int32 {
-	return s.StatusCode
-}
-
-func (s *WebsocketAwapDemoApiResponse) GetBody() *WebsocketAwapDemoApiResponseBody {
-	return s.Body
-}
-
-func (s *WebsocketAwapDemoApiResponse) SetHeaders(v map[string]*string) *WebsocketAwapDemoApiResponse {
-	s.Headers = v
-	return s
-}
-
-func (s *WebsocketAwapDemoApiResponse) SetStatusCode(v int32) *WebsocketAwapDemoApiResponse {
-	s.StatusCode = &v
-	return s
-}
-
-func (s *WebsocketAwapDemoApiResponse) SetBody(v *WebsocketAwapDemoApiResponseBody) *WebsocketAwapDemoApiResponse {
-	s.Body = v
-	return s
-}
-
-func (s *WebsocketAwapDemoApiResponse) Validate() error {
-	if s.Body != nil {
-		if err := s.Body.Validate(); err != nil {
-			return err
-		}
-	}
-	return nil
+	WebsockeWebSocketClient *websocketUtils.WebSocketClient `json:"websocketClient,omitempty" xml:"websocketClient,omitempty"`
 }
