@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/CodeSpaceiiii/dalutest-20220202/client"
+	"github.com/CodeSpaceiiii/dalutest-20220202/client/WebsocketAwapDemoApi"
 	"github.com/alibabacloud-go/darabonba-openapi/v2/utils"
 	"github.com/alibabacloud-go/tea/dara"
 	credential "github.com/aliyun/credentials-go/credentials"
@@ -91,7 +92,7 @@ type AwapWebSocketHandler struct {
 	MessageReceivedCount      int
 	ErrorCount                int
 	ClosedCalled              bool
-	LastDownstreamTextEvent   *client.WebsocketAwapDemoApiDataDownstreamTextEvent
+	LastDownstreamTextEvent   *WebsocketAwapDemoApi.DownstreamTextEvent
 	LastDownstreamBinaryEvent []byte
 	LastMessageReceiveEvent   bool
 }
@@ -113,8 +114,8 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 
 	// 根据消息类型处理不同的数据
 	switch messageType {
-	case client.WebsocketAwapDemoApiMessageTypeDownstreamTextEvent:
-		if eventData, ok := data.(*client.WebsocketAwapDemoApiDataDownstreamTextEvent); ok {
+	case WebsocketAwapDemoApi.DownstreamTextEventMessageType:
+		if eventData, ok := data.(*WebsocketAwapDemoApi.DownstreamTextEvent); ok {
 			h.LastDownstreamTextEvent = eventData
 			eventJSON, _ := json.Marshal(eventData)
 			fmt.Printf("[AWAP Handler] DownstreamTextEvent data: %s\n", string(eventJSON))
@@ -128,7 +129,7 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 			}
 		}
 
-	case client.WebsocketAwapDemoApiMessageTypeDownstreamBinaryEvent:
+	case WebsocketAwapDemoApi.DownstreamBinaryEventMessageType:
 		if binaryData, ok := data.([]byte); ok {
 			h.LastDownstreamBinaryEvent = binaryData
 			fmt.Printf("[AWAP Handler] DownstreamBinaryEvent. Size: %d bytes\n", len(binaryData))
@@ -136,9 +137,11 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 			fmt.Printf("[AWAP Handler] DownstreamBinaryEvent data type: %T\n", data)
 		}
 
-	case client.WebsocketAwapDemoApiMessageTypeMessageReceiveEvent:
+	case WebsocketAwapDemoApi.ReceiveEventMessageType:
 		h.LastMessageReceiveEvent = true
 		fmt.Printf("[AWAP Handler] MessageReceiveEvent received\n")
+		dataJSON, _ := json.Marshal(data)
+		fmt.Printf("data: %v\n", string(dataJSON))
 
 	default:
 		dataJSON, _ := json.Marshal(data)
@@ -374,7 +377,7 @@ func testAwap(apiClient *client.Client) {
 	// 如果需要，可以发送一些测试消息
 	if handler.ConnectedCalled {
 		// 发送 UpstreamTextEvent 消息示例
-		testEvent := &client.WebsocketAwapDemoApiDataUpstreamTextEvent{
+		testEvent := &WebsocketAwapDemoApi.UpstreamTextEvent{
 			Name: dara.String("test-event"),
 			Object: &struct {
 				StrField  *string   `json:"strField,omitempty" xml:"strField,omitempty"`
@@ -400,7 +403,7 @@ func testAwap(apiClient *client.Client) {
 			},
 		}
 
-		if err := wsClient.SendRawAwapMessage(client.WebsocketAwapDemoApiMessageTypeUpstreamTextEvent, 1, testEvent); err != nil {
+		if err := wsClient.SendRawAwapMessage(WebsocketAwapDemoApi.UpstreamTextEventMessageType, 1, testEvent); err != nil {
 			log.Printf("Failed to send AWAP message: %v", err)
 		} else {
 			fmt.Println("Sent test UpstreamTextEvent message")
