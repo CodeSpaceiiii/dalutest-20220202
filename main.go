@@ -114,7 +114,7 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 
 	// 根据消息类型处理不同的数据
 	switch messageType {
-	case WebsocketAwapDemoApi.DownstreamTextEventMessageType:
+	case WebsocketAwapDemoApi.DownstreamTextEvent_MessageType:
 		if eventData, ok := data.(*WebsocketAwapDemoApi.DownstreamTextEvent); ok {
 			h.LastDownstreamTextEvent = eventData
 			eventJSON, _ := json.Marshal(eventData)
@@ -129,7 +129,7 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 			}
 		}
 
-	case WebsocketAwapDemoApi.DownstreamBinaryEventMessageType:
+	case WebsocketAwapDemoApi.DownstreamBinaryEvent_MessageType:
 		if binaryData, ok := data.([]byte); ok {
 			h.LastDownstreamBinaryEvent = binaryData
 			fmt.Printf("[AWAP Handler] DownstreamBinaryEvent. Size: %d bytes\n", len(binaryData))
@@ -137,7 +137,7 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 			fmt.Printf("[AWAP Handler] DownstreamBinaryEvent data type: %T\n", data)
 		}
 
-	case WebsocketAwapDemoApi.ReceiveEventMessageType:
+	case WebsocketAwapDemoApi.ReceiveEvent_MessageType:
 		h.LastMessageReceiveEvent = true
 		fmt.Printf("[AWAP Handler] MessageReceiveEvent received\n")
 		dataJSON, _ := json.Marshal(data)
@@ -403,7 +403,7 @@ func testAwap(apiClient *client.Client) {
 			},
 		}
 
-		if err := wsClient.SendRawAwapMessage(WebsocketAwapDemoApi.UpstreamTextEventMessageType, 1, testEvent); err != nil {
+		if err := wsClient.SendRawAwapMessage(WebsocketAwapDemoApi.UpstreamTextEvent_MessageType, 1, testEvent); err != nil {
 			log.Printf("Failed to send AWAP message: %v", err)
 		} else {
 			fmt.Println("Sent test UpstreamTextEvent message")

@@ -14,14 +14,11 @@ type GeneralUpstreamTextEvent struct {
 	Map map[string]interface{} `json:"map,omitempty" xml:"map,omitempty"`
 }
 
-type GeneralUpstreamBinaryEvent struct {
-}
+type GeneralUpstreamBinaryEvent interface{}
 
-type UpstreamDefaultTextEvent struct {
-}
+type UpstreamDefaultTextEvent interface{}
 
-type DownstreamDefaultTextEvent struct {
-}
+type DownstreamDefaultTextEvent interface{}
 
 type GeneralDownstreamTextEvent struct {
 	AudioId        *int32  `json:"audioId,omitempty" xml:"audioId,omitempty"`
@@ -33,5 +30,4 @@ type GeneralDownstreamTextEvent struct {
 	} `json:"additionalConf,omitempty" xml:"additionalConf,omitempty"`
 }
 
-type GeneralDownstreamBinaryEvent struct {
-}
+type GeneralDownstreamBinaryEvent interface{}

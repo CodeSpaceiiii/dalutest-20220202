@@ -5,17 +5,17 @@ import "github.com/alibabacloud-go/tea/dara"
 // 实现的枚举类
 const (
 	// Upstream event types (client -> server)
-	UpstreamTextEventMessageType    dara.AwapMessageType = "UpstreamTextEvent"
+	UpstreamTextEvent_MessageType   dara.AwapMessageType = "UpstreamTextEvent"
 	UpstreamBinaryEventMessageType  dara.AwapMessageType = "UpstreamBinaryEvent"
 	AckRequiredTextEventMessageType dara.AwapMessageType = "AckRequiredTextEvent"
 
 	// Downstream event types (server -> client)
-	ReceiveEventMessageType          dara.AwapMessageType = "MessageReceiveEvent"
-	DownstreamTextEventMessageType   dara.AwapMessageType = "DownstreamTextEvent"
-	DownstreamBinaryEventMessageType dara.AwapMessageType = "DownstreamBinaryEvent"
+	ReceiveEvent_MessageType          dara.AwapMessageType = "MessageReceiveEvent"
+	DownstreamTextEvent_MessageType   dara.AwapMessageType = "DownstreamTextEvent"
+	DownstreamBinaryEvent_MessageType dara.AwapMessageType = "DownstreamBinaryEvent"
 
 	// Control message types (server -> client)
-	ReconnectMessageType dara.GeneralMessageType = "RECONNECT" // Server-initiated graceful reconnection
+	Reconnect_MessageType dara.GeneralMessageType = "RECONNECT" // Server-initiated graceful reconnection
 )
 
 type UpstreamTextEvent struct {
@@ -32,14 +32,11 @@ type UpstreamTextEvent struct {
 	Map map[string]interface{} `json:"map,omitempty" xml:"map,omitempty"`
 }
 
-type AckRequiredTextEvent struct {
-}
+type AckRequiredTextEvent interface{}
 
-type UpstreamBinaryEvent struct {
-}
+type UpstreamBinaryEvent interface{}
 
-type MessageReceiveEvent struct {
-}
+type MessageReceiveEvent interface{}
 
 type DownstreamTextEvent struct {
 	AudioId        *int32  `json:"audioId,omitempty" xml:"audioId,omitempty"`
@@ -51,5 +48,4 @@ type DownstreamTextEvent struct {
 	} `json:"additionalConf,omitempty" xml:"additionalConf,omitempty"`
 }
 
-type DownstreamBinaryEvent struct {
-}
+type DownstreamBinaryEvent interface{}
