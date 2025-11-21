@@ -5,9 +5,9 @@ import "github.com/alibabacloud-go/tea/dara"
 // 实现的枚举类
 const (
 	// Upstream event types (client -> server)
-	UpstreamTextEvent_MessageType   dara.AwapMessageType = "UpstreamTextEvent"
-	UpstreamBinaryEventMessageType  dara.AwapMessageType = "UpstreamBinaryEvent"
-	AckRequiredTextEventMessageType dara.AwapMessageType = "AckRequiredTextEvent"
+	UpstreamTextEvent_MessageType    dara.AwapMessageType = "UpstreamTextEvent"
+	UpstreamBinaryEvent_MessageType  dara.AwapMessageType = "UpstreamBinaryEvent"
+	AckRequiredTextEvent_MessageType dara.AwapMessageType = "AckRequiredTextEvent"
 
 	// Downstream event types (server -> client)
 	ReceiveEvent_MessageType          dara.AwapMessageType = "MessageReceiveEvent"
