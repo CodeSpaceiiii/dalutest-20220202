@@ -15,7 +15,7 @@ const (
 	DownstreamBinaryEvent_MessageType dara.AwapMessageType = "DownstreamBinaryEvent"
 
 	// Control message types (server -> client)
-	Reconnect_MessageType dara.GeneralMessageType = "RECONNECT" // Server-initiated graceful reconnection
+	Reconnect_MessageType dara.AwapMessageType = "RECONNECT" // Server-initiated graceful reconnection only for awap
 )
 
 type UpstreamTextEvent struct {

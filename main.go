@@ -30,10 +30,15 @@ func (h *GeneralWebSocketHandler) AfterConnectionEstablished(session *dara.WebSo
 	return nil
 }
 
-func (h *GeneralWebSocketHandler) HandleGeneralTextMessage(session *dara.WebSocketSessionInfo, message *dara.GeneralMessage) error {
+func (h *GeneralWebSocketHandler) HandleGeneralMessage(session *dara.WebSocketSessionInfo, message *dara.GeneralMessage) error {
 	h.MessageReceivedCount++
-	h.LastTextMessage = message
-	fmt.Printf("[Handler] Received text message. Body: %v\n", message.Body)
+	if message.Format == dara.GeneralMessageFormatText {
+		h.LastTextMessage = message
+		fmt.Printf("[Handler] Received text message. Body: %v\n", message.Body)
+	} else if message.Format == dara.GeneralMessageFormatBinary {
+		h.LastBinaryMessage = message.Body.([]byte)
+		fmt.Printf("[Handler] Received binary message. Body: %v\n", message.Body)
+	}
 
 	// 尝试解析 body 为具体的类型
 	if bodyBytes, ok := message.Body.([]byte); ok {
@@ -48,21 +53,9 @@ func (h *GeneralWebSocketHandler) HandleGeneralTextMessage(session *dara.WebSock
 	return nil
 }
 
-func (h *GeneralWebSocketHandler) HandleGeneralBinaryMessage(session *dara.WebSocketSessionInfo, data []byte) error {
-	h.MessageReceivedCount++
-	h.LastBinaryMessage = data
-	fmt.Printf("[Handler] Received binary message. Size: %d bytes\n", len(data))
-	return nil
-}
-
-func (h *GeneralWebSocketHandler) HandleGeneralIncomingMessage(session *dara.WebSocketSessionInfo, message *dara.GeneralIncomingMessage) error {
-	fmt.Printf("[Handler] HandleGeneralIncomingMessage called. IsBinary: %v\n", message.IsBinary)
-	return nil
-}
-
 func (h *GeneralWebSocketHandler) HandleRawMessage(session *dara.WebSocketSessionInfo, message *dara.WebSocketMessage) error {
-	// 这个方法通常不会被调用，因为 GeneralWebSocketHandler 会优先使用 HandleGeneralTextMessage/HandleGeneralBinaryMessage
-	// 但如果消息无法解析为 General 格式，会回退到这里
+	// 这个方法通常不会被调用，因为 GeneralWebSocketHandler 会优先使用 HandleGeneralMessage
+	// 如果用户未自定义HandleGeneralMessage, 这里会返回原始messsage 供用户处理
 	fmt.Printf("[Handler] HandleRawMessage called. Type: %d, Size: %d bytes, message: %v\n", message.Type, len(message.Payload), message)
 	return nil
 }
@@ -152,7 +145,7 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 }
 
 func (h *AwapWebSocketHandler) HandleRawMessage(session *dara.WebSocketSessionInfo, message *dara.WebSocketMessage) error {
-	// 如果消息无法解析为 AWAP 格式，会回退到这里
+	// HandleAwapMessage, 这里会返回原始messsage 供用户处理
 	fmt.Printf("[AWAP Handler] HandleRawMessage called. Type: %d, Size: %d bytes, message: %v\n", message.Type, len(message.Payload), message)
 	return nil
 }
@@ -403,7 +396,7 @@ func testAwap(apiClient *client.Client) {
 			},
 		}
 
-		if err := wsClient.SendRawAwapMessage(WebsocketAwapDemoApi.UpstreamTextEvent_MessageType, 1, testEvent); err != nil {
+		if err := wsClient.SendRawAwapTextMessage(WebsocketAwapDemoApi.UpstreamTextEvent_MessageType, testEvent); err != nil {
 			log.Printf("Failed to send AWAP message: %v", err)
 		} else {
 			fmt.Println("Sent test UpstreamTextEvent message")
