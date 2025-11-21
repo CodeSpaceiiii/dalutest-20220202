@@ -102,8 +102,13 @@ func (h *AwapWebSocketHandler) AfterConnectionEstablished(session *dara.WebSocke
 	return nil
 }
 
-func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionInfo, messageType dara.AwapMessageType, data interface{}) error {
+func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionInfo, message *dara.AwapMessage) error {
 	h.MessageReceivedCount++
+
+	// 从 message 中提取 messageType 和 data
+	messageType := message.Type
+	data := message.Payload
+
 	fmt.Printf("[AWAP Handler] Received AWAP message. Type: %s\n", messageType)
 
 	// 根据消息类型处理不同的数据
@@ -122,6 +127,7 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 				fmt.Printf("[AWAP Handler] DownstreamTextEvent data type: %T, value: %v\n", data, data)
 			}
 		}
+
 	case client.WebsocketAwapDemoApiMessageTypeDownstreamBinaryEvent:
 		if binaryData, ok := data.([]byte); ok {
 			h.LastDownstreamBinaryEvent = binaryData
@@ -129,9 +135,11 @@ func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionI
 		} else {
 			fmt.Printf("[AWAP Handler] DownstreamBinaryEvent data type: %T\n", data)
 		}
+
 	case client.WebsocketAwapDemoApiMessageTypeMessageReceiveEvent:
 		h.LastMessageReceiveEvent = true
 		fmt.Printf("[AWAP Handler] MessageReceiveEvent received\n")
+
 	default:
 		dataJSON, _ := json.Marshal(data)
 		fmt.Printf("[AWAP Handler] Unknown message type: %s, data: %s\n", messageType, string(dataJSON))
