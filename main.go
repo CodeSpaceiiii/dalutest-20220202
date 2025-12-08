@@ -9,18 +9,19 @@ import (
 	"github.com/CodeSpaceiiii/dalutest-20220202/client"
 	"github.com/CodeSpaceiiii/dalutest-20220202/client/WebsocketAwapDemoApi"
 	"github.com/alibabacloud-go/darabonba-openapi/v2/utils"
+	"github.com/alibabacloud-go/darabonba-openapi/v2/websocketutils"
 	"github.com/alibabacloud-go/tea/dara"
 	credential "github.com/aliyun/credentials-go/credentials"
 )
 
 // GeneralWebSocketHandler 实现 GeneralWebSocketHandler 接口，用于处理 WebSocket General 协议消息
 type GeneralWebSocketHandler struct {
-	dara.AbstractGeneralWebSocketHandler
+	websocketutils.AbstractGeneralWebSocketHandler
 	ConnectedCalled      bool
 	MessageReceivedCount int
 	ErrorCount           int
 	ClosedCalled         bool
-	LastTextMessage      *dara.GeneralMessage
+	LastTextMessage      *websocketutils.GeneralMessage
 	LastBinaryMessage    []byte
 }
 
@@ -30,12 +31,12 @@ func (h *GeneralWebSocketHandler) AfterConnectionEstablished(session *dara.WebSo
 	return nil
 }
 
-func (h *GeneralWebSocketHandler) HandleGeneralMessage(session *dara.WebSocketSessionInfo, message *dara.GeneralMessage) error {
+func (h *GeneralWebSocketHandler) HandleGeneralMessage(session *dara.WebSocketSessionInfo, message *websocketutils.GeneralMessage) error {
 	h.MessageReceivedCount++
-	if message.Format == dara.GeneralMessageFormatText {
+	if message.Format == websocketutils.GeneralMessageFormatText {
 		h.LastTextMessage = message
 		fmt.Printf("[Handler] Received text message. Body: %v\n", message.Body)
-	} else if message.Format == dara.GeneralMessageFormatBinary {
+	} else if message.Format == websocketutils.GeneralMessageFormatBinary {
 		h.LastBinaryMessage = message.Body.([]byte)
 		fmt.Printf("[Handler] Received binary message. Body: %v\n", message.Body)
 	}
@@ -80,7 +81,7 @@ func (h *GeneralWebSocketHandler) SupportsPartialMessages() bool {
 
 // AwapWebSocketHandler 实现 AWAP WebSocket Handler，用于处理 WebSocket AWAP 协议消息
 type AwapWebSocketHandler struct {
-	dara.AbstractAwapWebSocketHandler
+	websocketutils.AbstractAwapWebSocketHandler
 	ConnectedCalled           bool
 	MessageReceivedCount      int
 	ErrorCount                int
@@ -96,7 +97,7 @@ func (h *AwapWebSocketHandler) AfterConnectionEstablished(session *dara.WebSocke
 	return nil
 }
 
-func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionInfo, message *dara.AwapMessage) error {
+func (h *AwapWebSocketHandler) HandleAwapMessage(session *dara.WebSocketSessionInfo, message *websocketutils.AwapMessage) error {
 	h.MessageReceivedCount++
 
 	// 从 message 中提取 messageType 和 data
@@ -254,7 +255,7 @@ func main() {
 	// 如果需要，可以发送一些测试消息
 	if handler.ConnectedCalled {
 		// 发送文本消息示例
-		testMessage := &dara.GeneralMessage{
+		testMessage := &websocketutils.GeneralMessage{
 			Body: map[string]interface{}{
 				"message":   "Hello from client",
 				"timestamp": time.Now().Unix(),
@@ -396,7 +397,7 @@ func testAwap(apiClient *client.Client) {
 			},
 		}
 
-		if err := wsClient.SendRawAwapTextMessage(WebsocketAwapDemoApi.UpstreamTextEvent_MessageType, testEvent); err != nil {
+		if err := wsClient.SendAwapTextMessage(websocketutils.NewAwapMessage(testEvent)); err != nil {
 			log.Printf("Failed to send AWAP message: %v", err)
 		} else {
 			fmt.Println("Sent test UpstreamTextEvent message")

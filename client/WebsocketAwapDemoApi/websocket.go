@@ -1,21 +1,21 @@
 package WebsocketAwapDemoApi
 
-import "github.com/alibabacloud-go/tea/dara"
+import "github.com/alibabacloud-go/darabonba-openapi/v2/websocketutils"
 
 // 实现的枚举类
 const (
 	// Upstream event types (client -> server)
-	UpstreamTextEvent_MessageType    dara.AwapMessageType = "UpstreamTextEvent"
-	UpstreamBinaryEvent_MessageType  dara.AwapMessageType = "UpstreamBinaryEvent"
-	AckRequiredTextEvent_MessageType dara.AwapMessageType = "AckRequiredTextEvent"
+	UpstreamTextEvent_MessageType    websocketutils.AwapMessageType = "UpstreamTextEvent"
+	UpstreamBinaryEvent_MessageType  websocketutils.AwapMessageType = "UpstreamBinaryEvent"
+	AckRequiredTextEvent_MessageType websocketutils.AwapMessageType = "AckRequiredTextEvent"
 
 	// Downstream event types (server -> client)
-	ReceiveEvent_MessageType          dara.AwapMessageType = "MessageReceiveEvent"
-	DownstreamTextEvent_MessageType   dara.AwapMessageType = "DownstreamTextEvent"
-	DownstreamBinaryEvent_MessageType dara.AwapMessageType = "DownstreamBinaryEvent"
+	ReceiveEvent_MessageType          websocketutils.AwapMessageType = "MessageReceiveEvent"
+	DownstreamTextEvent_MessageType   websocketutils.AwapMessageType = "DownstreamTextEvent"
+	DownstreamBinaryEvent_MessageType websocketutils.AwapMessageType = "DownstreamBinaryEvent"
 
 	// Control message types (server -> client)
-	Reconnect_MessageType dara.AwapMessageType = "RECONNECT" // Server-initiated graceful reconnection only for awap
+	Reconnect_MessageType websocketutils.AwapMessageType = "RECONNECT" // Server-initiated graceful reconnection only for awap
 )
 
 type UpstreamTextEvent struct {
